@@ -6,9 +6,9 @@ import os
 import json
 
 FRAME_PATH = "/media/data/mtriet/dataset/fb_frames_scnn_localization"
-SUB_PATH = "/media/data/mtriet/fb/"
+SUB_PATH = "/media/data/mtriet/%s/" % sys.argv[1]
 
-WINDOW_SIZE = 8 
+WINDOW_SIZE = 22 
 
 def read_next_lines(f, n):
     # read n lines from subtitle and pre-process
