@@ -14,9 +14,9 @@ for match in match_names:
         for i in match_names[match]:
             print i
             names = sorted(os.listdir(INPUT + '/' + i), key=lambda x: os.path.basename(x))
-            if len(names) == 0:
+            if len(names) == 0: # empty folder
                 os.rmdir(INPUT + '/' + i)
                 continue
-            f.write("-->> %s\n%s\n-->> %s\n\n" % (names[0], i.split('_')[-1], names[-1]))
+            f.write("-->> %s\n%s\n-->> %s\n\n" % (names[0].split('.')[0], i.split('_')[-1], names[-1].split('.')[0]))
 
 
