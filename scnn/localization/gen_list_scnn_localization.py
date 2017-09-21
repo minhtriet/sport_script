@@ -5,14 +5,14 @@ import pdb
 import os
 import json
 
-FRAME_PATH = "/media/data/mtriet/dataset/fb_frames_scnn_localization"
+FRAME_PATH = "/media/data/mtriet/dataset/scnn_%s_frames" % sys.argv[1]
 SUB_PATH = "/media/data/mtriet/%s/" % sys.argv[1]
 
 WINDOW_SIZE = 22 
 
 def read_next_lines(f, n):
     # read n lines from subtitle and pre-process
-    while True: 
+    while True:        
         next_n_lines = list(islice(f, n))
         if not next_n_lines:
             return False
@@ -49,7 +49,18 @@ with open('%s_train_scnn_localization.lst' % sys.argv[1], 'w') as r:
                             break
 
                     end_pivot = min(begin_pivot + WINDOW_SIZE, len(frames))
-                    iou_score = iou(begin_pivot, next_n_lines)
-                    if iou_score > 0:
-                        r.write("%s/%s/%05d.jpg %d %d %f\n" % \
-                        (frame_root, folder, begin_pivot, WINDOW_SIZE, classes[next_n_lines[1].strip()], iou_score))
+                    # if window is in the segment, assign as 1                    
+                    frames = range(begin_pivot, begin_pivot + WINDOW_SIZE + 1)
+                    subtitles = range(subtitle_lines[0], subtitle_lines[2] + 1)
+                    intersection = np.intersect1d(frames, subtitles)
+
+                    if len(intersection) == len(frames):        # the subtitle contains the window
+                        r.write("%s/%s %05d %d %d %f\n" % \
+                        (frame_root, folder, begin_pivot, WINDOW_SIZE, classes[next_n_lines[1].strip()], 1))
+                    elif len(intersection) == 0:
+                        r.write("%s/%s %05d %d %d %f\n" % \
+                        (frame_root, folder, begin_pivot, WINDOW_SIZE, classes[next_n_lines[1].strip()], 0))
+                    else
+                        union = len(frames) + len(subtitles) - len(intersection)
+                        r.write("%s/%s %05d %d %d %f\n" % \
+                        (frame_root, folder, begin_pivot, WINDOW_SIZE, classes[next_n_lines[1].strip()], union))
