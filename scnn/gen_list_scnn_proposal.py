@@ -27,11 +27,14 @@ def read_next_lines(f, n):
 
 def load_subtitle(folder):
     subtitles = []
-    with open('%s/%s.aqt' % (SUB_PATH, folder), 'r') as f:        
-        lines = read_next_lines(f, 4)
-        if lines:
-            sub = Subtitle(lines[1], lines[0], lines[2])
-            subtitles.append(sub)
+    with open('%s/%s.aqt' % (SUB_PATH, folder), 'r') as f:
+        while True:
+            lines = read_next_lines(f, 4)
+            if lines:
+                sub = Subtitle(lines[1], lines[0], lines[2])
+                subtitles.append(sub)
+            else:
+                break
     return subtitles
 
 with open('../%s_classes.json' % sys.argv[1], 'r') as f:
@@ -45,12 +48,13 @@ with open('scnn_%s_train_proposal.lst' % sys.argv[1], 'w') as r:
                 subtitles = load_subtitle(folder) 
                 frames = sorted(os.listdir(frame_root + '/' + folder))
                 sub_index = 0
-                for begin_pivot in range(1, len(frames), window_size + 1):
+                for begin_pivot in range(1, len(frames) - window_size, window_size + 1):  # ignore last few frames
+#                    if (folder == "M_GBR-KOR") and (begin_pivot > 157640) and (window_size == 16):
+ #                       pdb.set_trace()
+
                     if begin_pivot > subtitles[sub_index].end:
                         if sub_index < len(subtitles) - 1:
                             sub_index += 1 
-                        else:
-                            break
 
                     end_pivot = min(begin_pivot + window_size, len(frames))
                     # if window is in the segment, assign as 1                    
@@ -59,25 +63,22 @@ with open('scnn_%s_train_proposal.lst' % sys.argv[1], 'w') as r:
                     intersection = np.intersect1d(segment, sub_range)
 
                     if len(intersection) == len(segment):        # the subtitle contains the segment
-                        r.write("%s/%s %05d %d %f\n" % (frame_root, folder, begin_pivot, window_size, 1))
+                        r.write("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, 1, window_size))
                     elif len(intersection) == 0:        # not contains at all, and frame.start < subtitle.start 
-                        r.write("%s/%s %05d %d %f\n" % (frame_root, folder, begin_pivot, window_size, 0))
+                        r.write("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, 0, window_size))
                     else:
                         union = len(segment) + len(sub_range) - len(intersection)
                         current_score = 1.0 * len(intersection) / union 
                         if current_score > 0.7:
-                            r.write("%s/%s %05d %d %f\n" % (frame_root, folder, begin_pivot, window_size, 1))
+                            r.write("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, 1, window_size))
                         else:  # check if next segment has better score, if > 0.7, and if max of them > 0.5
-                            if sub_index == len(subtitles) - 1:
-                                r.write("%s/%s %05d %d %f\n" % (frame_root, folder, begin_pivot, window_size, 0))
+                            if (sub_index == len(subtitles) - 1) or (subtitles[sub_index+1].klass == 'bg'):
+                                r.write("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, 0, window_size))
                             else:
                                 sub_range = subtitles[sub_index+1].get_range()
                                 intersection = np.intersect1d(segment, sub_range)
                                 next_score = 1.0 * len(intersection) / union 
-                                if max(current_score, next_n_lines) > 0.5:
-                                    r.write("%s/%s %05d %d %f\n" % (frame_root, folder, begin_pivot, window_size, 1))
+                                if max(current_score, next_score) > 0.5:
+                                    r.write("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, 1, window_size))
                                 else:
-                                    r.write("%s/%s %05d %d %f\n" % (frame_root, folder, begin_pivot, window_size, 0))
-                                                            
-                  
-              
+                                    r.write("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, 1, window_size)) 
