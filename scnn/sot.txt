@@ -1,0 +1,17 @@
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 13.480000 14.680000
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 16.800000 18.920000
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 26.880000 28.400000
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 29.120000 32.960000
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 72.800000 73.960000
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 75.240000 76.000000
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 77.200000 81.280000
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 13.480000 14.680000
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 16.800000 18.920000
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 26.880000 28.400000
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 29.120000 32.960000
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 72.800000 73.960000
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 75.240000 76.000000
+/media/data/mtriet/raw_video/fb_val/russ_newzealand 77.200000 81.280000
+/media/data/mtriet/raw_video/fb_val/aus_de 93.320000 95.400000
+/media/data/mtriet/raw_video/fb_val/Brazil_Spain 74.480000 75.680000
+/media/data/mtriet/raw_video/fb_val/Brazil_Spain 87.240000 89.760000
