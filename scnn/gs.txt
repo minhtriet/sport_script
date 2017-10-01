@@ -4,12 +4,6 @@
 /media/data/mtriet/raw_video/fb_val/russ_newzealand 89.800000 91.240000
 /media/data/mtriet/raw_video/fb_val/russ_newzealand 101.720000 103.040000
 /media/data/mtriet/raw_video/fb_val/russ_newzealand 107.160000 109.000000
-/media/data/mtriet/raw_video/fb_val/russ_newzealand 41.000000 43.920000
-/media/data/mtriet/raw_video/fb_val/russ_newzealand 57.600000 60.440000
-/media/data/mtriet/raw_video/fb_val/russ_newzealand 61.920000 68.360000
-/media/data/mtriet/raw_video/fb_val/russ_newzealand 89.800000 91.240000
-/media/data/mtriet/raw_video/fb_val/russ_newzealand 101.720000 103.040000
-/media/data/mtriet/raw_video/fb_val/russ_newzealand 107.160000 109.000000
 /media/data/mtriet/raw_video/fb_val/aus_de 17.280000 18.360000
 /media/data/mtriet/raw_video/fb_val/aus_de 24.520000 26.120000
 /media/data/mtriet/raw_video/fb_val/aus_de 27.440000 29.280000
