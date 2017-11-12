@@ -11,8 +11,8 @@ FRAME_PATH = "/media/data/mtriet/dataset/scnn_%s_frames" % sys.argv[1]
 SUB_PATH = "/media/data/mtriet/raw_video/%s" % sys.argv[1]
 WINDOW_SIZE = [16,32,64,128,256,512] 
 OVERLAP_RATE = 0.75
-ZERO_OUPUT_PROBABILITY = 0.01
-TRAIN_VAL_SPLIT = 0.7
+ZERO_OUPUT_PROBABILITY = 0.0
+TRAIN_VAL_SPLIT = 0.8
 
 def read_next_lines(f, n):
     # read n lines from subtitle and pre-process

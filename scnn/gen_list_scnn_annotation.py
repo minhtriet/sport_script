@@ -16,6 +16,7 @@ def read_next_lines(f, n):
     next_n_lines[0] = int(next_n_lines[0].split(' ')[1])
     next_n_lines[1] = next_n_lines[1].strip()
     next_n_lines[2] = int(next_n_lines[2].split(' ')[1])
+    # for football
     if (next_n_lines[1] == 'fkwg') or (next_n_lines[1] == 'fkwog'):
         next_n_lines[1] = 'fk'
     return next_n_lines
@@ -50,12 +51,11 @@ def generate_data(path):
                     
 
 if __name__ == '__main__':
-  if len(sys.argv) < 3:
-    print "gen_list <fb/bb> <val/test>"
+  if len(sys.argv) < 2:
+    print "gen_list <fb/bb>"
     sys.exit(1)
-  PATH = {'val' : "/media/data/mtriet/raw_video/%s_val/" % sys.argv[1],
-        'test' : "/media/data/mtriet/raw_video/%s_test/" % sys.argv[1]}
+  PATH = "/media/data/mtriet/raw_video/%s_eval/" % sys.argv[1]
   with open('../%s_classes.json' % sys.argv[1], 'r') as f:
     classes = json.load(f)
 
-  generate_data(PATH[sys.argv[2]])
+  generate_data(PATH)

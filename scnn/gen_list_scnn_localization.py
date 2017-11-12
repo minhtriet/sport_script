@@ -7,12 +7,22 @@ import json
 from subtitle import Subtitle
 import random
 
-FRAME_PATH = "/media/data/mtriet/dataset/scnn_%s_frames" % sys.argv[1]
-SUB_PATH = "/media/data/mtriet/raw_video/%s" % sys.argv[1]
+if sys.argv[2] == 'train': 
+  FRAME_PATH = "/media/data/mtriet/dataset/scnn_%s_frames" % sys.argv[1]
+  SUB_PATH = "/media/data/mtriet/raw_video/%s" % sys.argv[1]
+  TRAIN_VAL_SPLIT = 0.7
+elif sys.argv[2] == 'eval':
+  FRAME_PATH = "/media/data/mtriet/dataset/scnn_%s_eval_frames" % sys.argv[1]
+  SUB_PATH = "/media/data/mtriet/raw_video/%s_eval" % sys.argv[1]
+  TRAIN_VAL_SPLIT = 999 
+else:
+  print "gen_list_loc_scnn <fb/bb> <train/eval>"
+  sys.exit(1)
+
 WINDOW_SIZE = [16,32,64,128,256,512] 
 OVERLAP_RATE = 0.75
 ZERO_OUPUT_PROBABILITY = 0.01
-TRAIN_VAL_SPLIT = 0.7
+
 
 def read_next_lines(f, n):
     # read n lines from subtitle and pre-process
@@ -42,46 +52,63 @@ def load_subtitle(folder):
     return subtitles
 
 def print_data(train_file, val_file, frame_root, folder, begin_pivot, klass, window_size, score):
-  if klass == 1:
+  if klass != 0:
     if random.random() < TRAIN_VAL_SPLIT: 
       train_file.write("%s/%s/ %06d %d %d %f\n" % (frame_root, folder, begin_pivot, klass, window_size/16, score))
     else:
       val_file.write("%s/%s/ %06d %d %d %f\n" % (frame_root, folder, begin_pivot, klass, window_size/16, score))
+  else:
+    if random.random() < ZERO_OUPUT_PROBABILITY: 
+      if random.random() < TRAIN_VAL_SPLIT:
+        train_file.write("%s/%s/ %06d %d %d %f\n" % (frame_root, folder, begin_pivot, klass, window_size/16, score))
+      else:
+        val_file.write("%s/%s/ %06d %d %d %f\n" % (frame_root, folder, begin_pivot, klass, window_size/16, score))
 
 with open('../%s_classes.json' % sys.argv[1], 'r') as f:
     classes = json.load(f)
 
-with open('scnn_%s_train_localization.lst' % sys.argv[1], 'w') as train_file:
-  with open('scnn_%s_val_localization.lst' % sys.argv[1], 'w') as val_file:
-    for window_size in WINDOW_SIZE:
-      for frame_root, sub_folder, sub_files in os.walk(FRAME_PATH):
-        for folder in sub_folder:       
-          print folder
-          subtitles = load_subtitle(folder) 
-          frames = sorted(os.listdir(frame_root + '/' + folder))
-          sub_index = 0
-          for begin_pivot in range(1, len(frames) - window_size, int(window_size*(1 - OVERLAP_RATE))):  # ignore last few frames
+
+if sys.argv[2] == 'train':
+  train_file = open('scnn_%s_train_localization.lst' % sys.argv[1], 'w')
+  val_file = open('scnn_%s_val_localization.lst' % sys.argv[1], 'w') 
+else:
+  train_file = open('scnn_%s_eval_localization.lst' % sys.argv[1], 'w')
+  val_file = None 
+for window_size in WINDOW_SIZE:
+  for frame_root, sub_folder, sub_files in os.walk(FRAME_PATH):
+    for folder in sub_folder:       
+      print folder
+      subtitles = load_subtitle(folder) 
+      frames = sorted(os.listdir(frame_root + '/' + folder))
+      sub_index = 0
+      for begin_pivot in range(1, len(frames) - window_size, int(window_size*(1 - OVERLAP_RATE))):  # ignore last few frames
 #             if (folder == "M_GBR-KOR") and (begin_pivot > 157640) and (window_size == 16):
 #                pdb.set_trace()
 
-              if (begin_pivot > subtitles[sub_index].end) and (sub_index < len(subtitles) - 1):
-                  sub_index += 1 
+          if (begin_pivot > subtitles[sub_index].end) and (sub_index < len(subtitles) - 1):
+              sub_index += 1 
 
-              end_pivot = min(begin_pivot + window_size, len(frames))
-              segment = range(begin_pivot, begin_pivot + window_size + 1)
-              sub_range = subtitles[sub_index].get_range()
-              intersection = np.intersect1d(segment, sub_range)
-              if len(intersection) == len(segment):        # the subtitle contains the segment
-                  print_data(train_file, val_file, frame_root, folder, begin_pivot, 1, window_size, 1.0)
-              else:
-                  union = len(segment) + len(sub_range) - len(intersection)
-                  current_score = 1.0 * len(intersection) / union 
-                  if current_score > 0.7:
-                      print_data(train_file, val_file, frame_root, folder, begin_pivot, 1, window_size, current_score)
-                  else:  # check if next segment has better score, if > 0.7, and if max of them > 0.5
-                      if sub_index < len(subtitles) - 1: # already at last subtitle
-                          sub_range = subtitles[sub_index+1].get_range()
-                          intersection = np.intersect1d(segment, sub_range)
-                          next_score = 1.0 * len(intersection) / union 
-                          if max(current_score, next_score) > 0.5:
-                              print_data(train_file, val_file, frame_root, folder, begin_pivot, 1, window_size, max(current_score, next_score) )
+          end_pivot = min(begin_pivot + window_size, len(frames))
+          segment = range(begin_pivot, begin_pivot + window_size + 1)
+          sub_range = subtitles[sub_index].get_range()
+          intersection = np.intersect1d(segment, sub_range)
+          if len(intersection) == len(segment):        # the subtitle contains the segment
+              print_data(train_file, val_file, frame_root, folder, begin_pivot, classes[ subtitles[sub_index].klass ], window_size, 1.0)
+          else:
+              union = len(segment) + len(sub_range) - len(intersection)
+              current_score = 1.0 * len(intersection) / union 
+              if current_score > 0.7:
+                  print_data(train_file, val_file, frame_root, folder, begin_pivot, classes[ subtitles[sub_index].klass ], window_size, current_score)
+                  continue
+              else:  # check if next segment has better score, if > 0.7, and if max of them > 0.5
+                  if sub_index < len(subtitles) - 1: # already at last subtitle
+                      sub_range = subtitles[sub_index+1].get_range()
+                      intersection = np.intersect1d(segment, sub_range)
+                      next_score = 1.0 * len(intersection) / union 
+                      if max(current_score, next_score) > 0.5:
+                          print_data(train_file, val_file, frame_root, folder, begin_pivot, classes[ subtitles[sub_index].klass ], window_size, max(current_score, next_score) )
+                          continue
+                      print_data(train_file, val_file, frame_root, folder, begin_pivot, 0, window_size, 1.0)
+train_file.close()
+if sys.argv[2] == 'train':
+  val_file.close()
