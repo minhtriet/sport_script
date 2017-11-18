@@ -1,0 +1,7 @@
+generate all frames list
+python list_all_frame.py
+create lmdb file
+bash create_huawei.sh
+create mean file
+bash create_huawei_mean.sh
+
