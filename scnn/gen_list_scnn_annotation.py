@@ -34,7 +34,7 @@ def load_subtitle(path, aqt_file):
     return subtitles
 
 def generate_data(path):
-    subtitles = [x for x in os.listdir(path) if x.endswith('aqt')]    
+    subtitles = [x for x in os.listdir(path) if (x.endswith('aqt')) and not (x.endswith('auto.aqt'))] 
     for aqt_file in subtitles:
         text_file = aqt_file.split('.')[0]
         subtitle = load_subtitle(path, aqt_file)
@@ -44,7 +44,7 @@ def generate_data(path):
         while current_line < len(subtitle):
             if current_class != subtitle[current_line].klass:
                 current_class = subtitle[current_line].klass
-            with open("%s.txt" % current_class, 'a') as f:
+            with open("%s_val.txt" % current_class, 'a') as f:
                 while (current_line < len(subtitle)) and (current_class == subtitle[current_line].klass):
                     f.write('%s%s %f %f\n' % (path, text_file, subtitle[current_line].start / FRAME_RATE, subtitle[current_line].end / FRAME_RATE))
                     current_line += 1
@@ -54,7 +54,7 @@ if __name__ == '__main__':
   if len(sys.argv) < 2:
     print "gen_list <fb/bb>"
     sys.exit(1)
-  PATH = "/media/data/mtriet/raw_video/%s_eval/" % sys.argv[1]
+  PATH = "/media/data/mtriet/raw_video/%s/eval/" % sys.argv[1]
   with open('../%s_classes.json' % sys.argv[1], 'r') as f:
     classes = json.load(f)
 

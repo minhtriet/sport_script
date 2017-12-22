@@ -3,3 +3,4 @@
 .ipynb_checkpoints/
 scnn/*.lst
 scnn/*.txt
+data_prep/fb_leveldb/*
