@@ -69,7 +69,6 @@ with open('scnn_%s_train_classification.lst' % sys.argv[1], 'w') as train_file:
           sub_index = 0
           sub_class = classes[subtitles[sub_index].klass]
           for begin_pivot in range(1, len(frames) - window_size, int(window_size*(1 - OVERLAP_RATE))):  # ignore last few frames
-
               if (begin_pivot > subtitles[sub_index].end) and (sub_index < len(subtitles) - 1):
                   sub_index += 1
                   sub_class = classes[subtitles[sub_index].klass]
@@ -80,14 +79,13 @@ with open('scnn_%s_train_classification.lst' % sys.argv[1], 'w') as train_file:
               intersection = np.intersect1d(segment, sub_range)
               if len(intersection) == len(segment):        # the subtitle contains the segment
                 count[ sub_class ] += 1
-                print_data(train_file, val_file, frame_root, folder, begin_pivot, sub_class, window_size)
+                Event event = new Event(frame_root, folder, begin_pivot, sub_class, window_size)
               else:
                   union = len(segment) + len(sub_range) - len(intersection)
                   current_score = 1.0 * len(intersection) / union 
                   if current_score > 0.7:
                       count[ sub_class ] += 1
-                      Event event = new Event(frame_root, folder, begin_pivot,
-                      print_data(train_file, val_file, frame_root, folder, begin_pivot, sub_class, window_size)
+                      Event event = new Event(frame_root, folder, begin_pivot, sub_class, window_size)
                       continue
                   else:  # check if next segment has better score, if > 0.7, and if max of them > 0.5
                       if sub_index < len(subtitles) - 1: # already at last subtitle
@@ -96,10 +94,13 @@ with open('scnn_%s_train_classification.lst' % sys.argv[1], 'w') as train_file:
                           next_score = 1.0 * len(intersection) / union 
                           if max(current_score, next_score) > 0.5:
                             count[ sub_class ] += 1
-                            print_data(train_file, val_file, frame_root, folder, begin_pivot, sub_class, window_size)
-                              continue
-                      count[ 0 ] += 1
-                      print_data(train_file, val_file, frame_root, folder, begin_pivot, 0, window_size)
+                            Event event = new Event(frame_root, folder, begin_pivot, sub_class, window_size)
+                            continue
+                      # commented out bc this assumes that the bg class does not exist in feature extraction
+                      #count[ 0 ] += 1
+                      #Event event = new Event(frame_root, folder, begin_pivot, 0, window_size)
 
 # post processing, to balance out the classes
+
+print_data(train_file, val_file, frame_root, folder, begin_pivot, sub_class, window_size)
 
