@@ -91,13 +91,13 @@ with open('scnn_%s_train_classification.lst' % sys.argv[1], 'w') as train_file:
                       continue
                   else:  # check if next segment has better score, if > 0.7, and if max of them > 0.5
                       if sub_index < len(subtitles) - 1: # already at last subtitle
-                          sub_range = subtitles[sub_index+1].get_range()
-                          intersection = np.intersect1d(segment, sub_range)
-                          next_score = 1.0 * len(intersection) / union 
-                          if max(current_score, next_score) > 0.5:
-                            count[ sub_class ] += 1
-                            print_data(train_file, val_file, frame_root, folder, begin_pivot, sub_class, window_size)
-                              continue
+                        sub_range = subtitles[sub_index+1].get_range()
+                        intersection = np.intersect1d(segment, sub_range)
+                        next_score = 1.0 * len(intersection) / union 
+                        if max(current_score, next_score) > 0.5:
+                          count[ sub_class ] += 1
+                          print_data(train_file, val_file, frame_root, folder, begin_pivot, sub_class, window_size)
+                          continue
                       count[ 0 ] += 1
                       print_data(train_file, val_file, frame_root, folder, begin_pivot, 0, window_size)
 
