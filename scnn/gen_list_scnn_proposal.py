@@ -1,3 +1,5 @@
+# proposal needs to see the all augemented data
+
 from itertools import islice
 import numpy as np
 import sys
@@ -11,7 +13,7 @@ FRAME_PATH = "/media/data/mtriet/dataset/scnn_%s_frames" % sys.argv[1]
 SUB_PATH = "/media/data/mtriet/raw_video/%s" % sys.argv[1]
 WINDOW_SIZE = [16,32,64,128,256,512] 
 OVERLAP_RATE = 0.75
-ZERO_OUPUT_PROBABILITY = 0.0
+ZERO_OUPUT_PROBABILITY = 0.2
 TRAIN_VAL_SPLIT = 0.8
 
 def read_next_lines(f, n):
@@ -43,16 +45,21 @@ def load_subtitle(folder):
 
 def print_data(train_file, val_file, frame_root, folder, begin_pivot, klass, window_size):
   if klass == 1:
-    if random.random() < TRAIN_VAL_SPLIT: 
-      train_file.write("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, klass, window_size/16))
+    if random.random() < TRAIN_VAL_SPLIT:
+      train_file.write("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, klass, window_size/16))    
+      train_file.write("%s/%s/ %06d %d %d\n" % (frame_root + '_augment', folder, begin_pivot, klass, window_size/16))
     else:
       val_file.write("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, klass, window_size/16))
+      val_file.write("%s/%s/ %06d %d %d\n" % (frame_root + '_augment', folder, begin_pivot, klass, window_size/16))
   else:
     if random.random() < ZERO_OUPUT_PROBABILITY: 
       if random.random() < TRAIN_VAL_SPLIT: 
         train_file.write("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, klass, window_size/16))
+        train_file.write("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, klass, window_size/16))    
       else:
         val_file.write("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, klass, window_size/16))
+        val_file.write("%s/%s/ %06d %d %d\n" % (frame_root + '_augment', folder, begin_pivot, klass, window_size/16))
+  
 
 with open('../%s_classes.json' % sys.argv[1], 'r') as f:
     classes = json.load(f)
@@ -67,9 +74,6 @@ with open('scnn_%s_train_proposal.lst' % sys.argv[1], 'w') as train_file:
           frames = sorted(os.listdir(frame_root + '/' + folder))
           sub_index = 0
           for begin_pivot in range(1, len(frames) - window_size, int(window_size*(1 - OVERLAP_RATE))):  # ignore last few frames
-#             if (folder == "M_GBR-KOR") and (begin_pivot > 157640) and (window_size == 16):
-#                pdb.set_trace()
-
               if (begin_pivot > subtitles[sub_index].end) and (sub_index < len(subtitles) - 1):
                   sub_index += 1 
 

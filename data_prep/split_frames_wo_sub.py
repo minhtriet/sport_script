@@ -8,7 +8,7 @@ import shutil
 # input: vid_path = video path, allows wildcard
 # output: folders, each contains all frames of the video
 
-OUTPUT = '/media/data/mtriet/dataset/%s_frames_eval/' % sys.argv[1]
+OUTPUT = '/media/data/mtriet/dataset/scnn_%s_frames/' % sys.argv[1]
 
 def dump_frames(vid_path, overwrite):
     vid_name = OUTPUT + os.path.basename(vid_path).split('.')[0]
