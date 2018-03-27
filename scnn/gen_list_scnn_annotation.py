@@ -22,6 +22,7 @@ def read_next_lines(f, n):
     return next_n_lines
 
 def load_subtitle(path, aqt_file):
+    print "Loading %s%s" % (path, aqt_file)
     subtitles = []
     with open('%s%s' % (path, aqt_file), 'r') as f:
         while True:
@@ -43,12 +44,14 @@ def generate_data(path):
         current_line = 0 
         while current_line < len(subtitle):
             if current_class != subtitle[current_line].klass:
-                current_class = subtitle[current_line].klass
-            with open("%s_val.txt" % current_class, 'a') as f:
+                current_class = subtitle[current_line].klass              
+            with open("%s.txt" % current_class, 'a') as f:
                 while (current_line < len(subtitle)) and (current_class == subtitle[current_line].klass):
                     f.write('%s%s %f %f\n' % (path, text_file, subtitle[current_line].start / FRAME_RATE, subtitle[current_line].end / FRAME_RATE))
                     current_line += 1
-                    
+                    count[ classes[current_class] ] += 1
+    print classes
+    print count                    
 
 if __name__ == '__main__':
   if len(sys.argv) < 2:
@@ -57,5 +60,6 @@ if __name__ == '__main__':
   PATH = "/media/data/mtriet/raw_video/%s/eval/" % sys.argv[1]
   with open('../%s_classes.json' % sys.argv[1], 'r') as f:
     classes = json.load(f)
+    count = [0] * len(classes)
 
   generate_data(PATH)
