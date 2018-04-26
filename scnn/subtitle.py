@@ -32,6 +32,7 @@ class Subtitle(object):
 
     subtitles = []
     filename = '%s/%s_pad.aqt' % (SUB_PATH, folder) if pad else '%s/%s.aqt' % (SUB_PATH, folder)
+    print(filename)
     with open(filename, 'r') as f:
         while True:
             lines = read_next_lines(f, 4)
@@ -43,5 +44,5 @@ class Subtitle(object):
     return subtitles
 
   def to_string(self, front_pad, rear_pad):
-    return "-->> %d \n %s \n -->> %d" % (max(0, int(self.start)-25*int(front_pad)), self.klass, int(self.end)+25*int(rear_pad))
+    return "-->> %d \n %s \n-->> %d \n\n" % (max(0, int(self.start)-25*int(front_pad)), self.klass, int(self.end)+25*int(rear_pad))
 

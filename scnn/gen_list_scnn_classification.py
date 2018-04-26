@@ -17,7 +17,6 @@ ZERO_OUPUT_PROBABILITY = 0.015
 TRAIN_VAL_SPLIT = 0.7
 
 
-
 def print_data(train_file, val_file, event, mirror):
   if random.random() < TRAIN_VAL_SPLIT: 
     train_file.write(event.to_string(mirror))
@@ -33,7 +32,7 @@ for window_size in WINDOW_SIZE:
   for frame_root, sub_folder, sub_files in os.walk(FRAME_PATH):
     for folder in sub_folder:       
       print folder
-      subtitles = Subtitle.load_subtitle(folder) 
+      subtitles = Subtitle.load_subtitle(SUB_PATH, folder, sys.argv[3]) 
       frames = sorted(os.listdir(frame_root + '/' + folder))
       sub_index = 0
       sub_class = classes[subtitles[sub_index].klass]

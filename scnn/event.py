@@ -11,14 +11,8 @@ class Event(object):
     if not score is None:
       self.score = score 
 
-  def to_string(self, mirror=False):
-    if mirror:
-      try:
-        return "%s/%s/ %06d %d %d %f\n" % (self.frame_root + "_augment", self.folder, self.begin_pivot, self.sub_class, self.window_size/16, self.score)
-      except:
-        return "%s/%s/ %06d %d %d\n" % (self.frame_root + "_augment", self.folder, self.begin_pivot, self.sub_class, self.window_size/16)
-    else:
-      try:
-        return "%s/%s/ %06d %d %d %f\n" % (self.frame_root, self.folder, self.begin_pivot, self.sub_class, self.window_size/16, self.score)
-      except:
-        return "%s/%s/ %06d %d %d\n" % (self.frame_root, self.folder, self.begin_pivot, self.sub_class, self.window_size/16)
+  def to_string(self):
+    try:
+      return "%s/%s/ %06d %d %d %f\n" % (self.frame_root, self.folder, self.begin_pivot, self.sub_class, self.window_size/16, self.score)
+    except:
+      return "%s/%s/ %06d %d %d\n" % (self.frame_root, self.folder, self.begin_pivot, self.sub_class, self.window_size/16)
