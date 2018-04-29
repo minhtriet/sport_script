@@ -6,15 +6,10 @@ import sys
 import subprocess
 import shutil
 
-if sys.argv[2] == 'train':
-  OUTPUT = '/media/data/mtriet/dataset/%s_frames/' % sys.argv[1]
-elif sys.argv[2] == 'eval':
-  OUTPUT = '/media/data/mtriet/dataset/%s_frames_eval/' % sys.argv[1]
 
-VIDEO_PATH = '/media/data/mtriet/raw_video/%s/%s/*.mp4' % (sys.argv[1], sys.argv[2])
 # input: vid_path = video path, allows wildcard
 # output: folders, each contains all frames of the video
-def dump_frames(vid_path):
+def dump_frames(OUTPUT, vid_path):
     vid_name = os.path.basename(vid_path).split('.')[0]
     subtitle_path = os.path.dirname(vid_path) + '/' + vid_name + ".aqt"
     output_path = OUTPUT + vid_name
@@ -59,9 +54,13 @@ def dump_frames(vid_path):
     shutil.rmtree(output_path)
  
 if __name__ == "__main__":
-  if len(sys.argv) < 3:
-    print 'gen_frame <sport> <train/val>'
+  if len(sys.argv) < 2:
+    print 'gen_frame <sport>'
     sys.exit(1) 
   
-  for i in glob.glob(VIDEO_PATH):
-    dump_frames(i) 
+#  for split in ['train', 'val']:
+  for split in ['val']:
+    VIDEO_PATH = '/media/data/mtriet/raw_video/%s/%s/*.mp4' % (sys.argv[1], split)
+    for i in glob.glob(VIDEO_PATH):
+      OUTPUT = '/media/data/mtriet/dataset/%s_frame_%s/' % (sys.argv[1], split)
+      dump_frames(OUTPUT, i) 

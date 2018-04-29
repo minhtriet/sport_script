@@ -10,26 +10,24 @@ import pdb
 import sys
 import glob
 import os
-import pdb
 import shutil
 
-#DATASET_PATH = '/media/data/mtriet/raw_video/%s_test/' % sys.argv[1]
-#OUTPUT_PATH = '/media/data/mtriet/raw_video/%s_test_split/' % sys.argv[1]
-DATASET_PATH = '/media/data/mtriet/raw_video/%s_eval/' % sys.argv[1]
-OUTPUT_PATH = '/media/data/mtriet/raw_video/%s_eval_split/' % sys.argv[1]
+DATASET_PATH = '/media/data/mtriet/raw_video/%s/eval/' % sys.argv[1]
+OUTPUT_PATH = '/media/data/mtriet/dataset/%s_frames_eval_split/' % sys.argv[1]
 
 def create_sub(file_name):
+    print file_name
     start = [1]
     end = []
     name = os.path.basename(file_name)
     name = name.split('.')[0]
-    
     os.system('rm %s/*.jpg' % OUTPUT_PATH) 
     os.system('ffmpeg -loglevel panic -i %s %s/%%06d.jpg' % (file_name, OUTPUT_PATH))
 
     # create subtitle for visualizing
+    
     with open(file_name.split('.')[0] + '_auto.aqt', 'w') as f:
-      print "Create file %s" % file_name.split('.')[0] + '.aqt'
+      print "Create file %s" % file_name.split('.')[0] + '_auto.aqt'
       count = 1
       if not os.path.isdir("%s_%03d" % (name, count)):
           os.mkdir("%s_%03d" % (name, count))
@@ -58,6 +56,7 @@ def create_sub(file_name):
         # rename files to 0 range
         for j in xrange(start[i], end[i]+1):
             shutil.move('../%06d.jpg' % j, '%06d.jpg' % (j-start[i]+1))
+    os.chdir('..')
 
 for i in glob.glob("%s/*.mp4" % DATASET_PATH):
     create_sub(i)

@@ -10,6 +10,9 @@ class Event(object):
     self.window_size = window_size
     if not score is None:
       self.score = score 
+  
+  def __repr__(self):
+    return self.to_string()
 
   def to_string(self):
     try:
