@@ -1,4 +1,7 @@
-# proposal needs to see the all augemented data
+# FORMAT: path num_frame class
+# video_frame_path 100 10
+# video_2_frame_path 150 31
+# ...
 
 from itertools import islice
 import numpy as np
@@ -9,9 +12,8 @@ import json
 from subtitle import Subtitle
 import util
 
-FRAME_PATH = "/media/data/mtriet/dataset/scnn_%s_frames" % sys.argv[1]
+FRAME_PATH = "/media/data/mtriet/dataset/tsn_%s_frames" % sys.argv[1]
 SUB_PATH = "/media/data/mtriet/raw_video/%s/train" % (sys.argv[1])
-WINDOW_SIZE = [16,32,64,128,256,512] 
 OVERLAP_RATE = 0.75
 CLASSES = [[], []]  # 0, 1
 
