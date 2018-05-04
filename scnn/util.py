@@ -3,6 +3,9 @@ import random
 from sklearn import model_selection
 
 def balance(arr):
+  """
+    balance based on a 2d array
+  """
   length = map(len, arr)
   print("Length of classes: %s" % length)
   min_classes = np.argmin(length)
