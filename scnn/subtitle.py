@@ -24,10 +24,6 @@ class Subtitle(object):
       next_n_lines[0] = int(next_n_lines[0].split(' ')[1])
       next_n_lines[1] = next_n_lines[1].strip()
       next_n_lines[2] = int(next_n_lines[2].split(' ')[1])
-      if (next_n_lines[1] == 'fkwg') or (next_n_lines[1] == 'fkwog'):
-          next_n_lines[1] = 'fk'
-      if (next_n_lines[1] == 'pkwg') or (next_n_lines[1] == 'pkwog'):
-          next_n_lines[1] = 'pk'
       return next_n_lines
 
     subtitles = []

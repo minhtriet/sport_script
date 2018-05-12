@@ -1,11 +1,9 @@
 # proposal needs to see the all augemented data
 
-from itertools import islice
-import numpy as np
 import sys
 import pdb
 import os
-import json
+import numpy as np
 from subtitle import Subtitle
 import util
 
@@ -18,16 +16,16 @@ CLASSES = [[], []]  # 0, 1
 if len(sys.argv) < 3:
   print('fb pad=True/False')
   sys.exit(1)
-  
+
 for window_size in WINDOW_SIZE:
   for frame_root, sub_folder, sub_files in os.walk(FRAME_PATH):
-    for folder in sub_folder:       
-      subtitles = Subtitle.load_subtitle(SUB_PATH, folder, sys.argv[2]) 
+    for folder in sub_folder: 
+      subtitles = Subtitle.load_subtitle(SUB_PATH, folder, sys.argv[2])
       frames = sorted(os.listdir(frame_root + '/' + folder))
       sub_index = 0
       for begin_pivot in range(1, len(frames) - window_size, int(window_size*(1 - OVERLAP_RATE))):  # ignore last few frames
         if (begin_pivot > subtitles[sub_index].end) and (sub_index < len(subtitles) - 1):
-          sub_index += 1 
+          sub_index += 1
 
         end_pivot = min(begin_pivot + window_size, len(frames))
         segment = range(begin_pivot, begin_pivot + window_size + 1)
@@ -44,13 +42,13 @@ for window_size in WINDOW_SIZE:
             CLASSES[1].append("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, 1, window_size/16))    
           else:  # check if next segment has better score, if > 0.7, and if max of them > 0.5
             if sub_index == len(subtitles) - 1: # already at last subtitle
-              CLASSES[0].append("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, 0, window_size/16))    
+              CLASSES[0].append("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, 0, window_size/16))
             else:
               sub_range = subtitles[sub_index+1].get_range()
               intersection = np.intersect1d(segment, sub_range)
               next_score = 1.0 * len(intersection) / union 
               if max(current_score, next_score) > 0.5:
-                CLASSES[1].append("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, 1, window_size/16))    
+                CLASSES[1].append("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, 1, window_size/16))
               else:
                 CLASSES[0].append("%s/%s/ %06d %d %d\n" % (frame_root, folder, begin_pivot, 0, window_size/16))
 

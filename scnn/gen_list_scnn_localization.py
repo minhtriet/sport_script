@@ -1,11 +1,10 @@
-import numpy as np
 import sys
 import pdb
 import os
 import json
-from subtitle import Subtitle
-import random
+import numpy as np
 from event import Event
+from subtitle import Subtitle
 
 import util
 
@@ -18,7 +17,7 @@ OVERLAP_RATE = 0.75
 
 with open('../%s_classes.json' % sys.argv[1], 'r') as f:
   classes = json.load(f)
-  events = [[]] * len(classes)
+  events = [[] for _ in range(len(classes))]
 
 FRAME_PATH = "/media/data/mtriet/dataset/scnn_%s_frames" % sys.argv[1]
 SUB_PATH = "/media/data/mtriet/raw_video/%s/train" % sys.argv[1]
@@ -32,7 +31,7 @@ for window_size in WINDOW_SIZE:
       sub_class = classes[subtitles[sub_index].klass]            
       for begin_pivot in range(1, len(frames) - window_size, int(window_size*(1 - OVERLAP_RATE))):  # ignore last few frames
           if (begin_pivot > subtitles[sub_index].end) and (sub_index < len(subtitles) - 1):
-              sub_index += 1 
+              sub_index += 1
               sub_class = classes[subtitles[sub_index].klass]            
 
           end_pivot = min(begin_pivot + window_size, len(frames))

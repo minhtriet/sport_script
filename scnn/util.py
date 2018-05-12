@@ -1,21 +1,32 @@
-import numpy as np
 import random
+
+import numpy as np
 from sklearn import model_selection
 
 def balance(arr):
   """
-    balance based on a 2d array
+    balance based on a 2d array, exclude the [0] class
+    and over sampling
   """
+  length = map(len, arr)[1:]
+  print("Length of classes: %s" % length)
+  max_len = np.max(length)
+  import pdb
+  for i, _ in enumerate(arr):
+    if len(arr[i]) < max_len:
+      for j in range(max_len - len(arr[i])):
+        try:
+          arr[i].append( random.choice(arr[i]) )   # oversampling
+        except:
+          pdb.set_trace()
+    else:
+      arr[i] = random.sample(arr[i], max_len)
   length = map(len, arr)
   print("Length of classes: %s" % length)
-  min_classes = np.argmin(length)
-  for i in range(len(arr)):
-    if i != min_classes:
-      arr[i] = random.sample(arr[i], len(arr[min_classes]))
   return arr
 
 def print_data(train_file_addr, val_file_addr, x, y):
-  
+
   def p_data(addr, arr):
     with open(addr, 'w') as f:
       for i in arr:
